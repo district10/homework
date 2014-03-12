@@ -14,7 +14,21 @@
 
 #include<stdio.h>
 
+
+/*****************************************************************
+ * Declaration
+ ****************************************************************/
 int cost(int n_men, int n_women, int n_child);
+void parse_params(int argc,
+		  char ** argv,
+		  int &cost_total,
+		  int &cost_each_man,
+		  int &cost_each_woman,
+		  int &cost_each_child);
+
+/******************************************************************
+ * Main
+ ******************************************************************/
 
 int main(int argc, char **argv)
 {
@@ -22,6 +36,33 @@ int main(int argc, char **argv)
   int cost_each_man = 0;
   int cost_each_woman = 0;
   int cost_each_child = 0;
+  parse_params(argc, argv, &cost_total, &cost_each_man, &cost_each_woman, &cost_each_child);
+
+
+  int m_a, m_b;
+  int w_a, w_b;
+
+  m_a = 0, m_b = cost_total / cost_each_man + 1;
+
+}
+
+
+/***********************************************************************************
+ * Implementation
+ **********************************************************************************/
+
+int cost(int n_men, int n_women, int n_child)
+{
+  return n_men * cost_each_man + n_women * cost_each_woman + n_child * cost_each_child;
+}
+
+void parse_params(int argc,
+		  char ** argv,
+		  int &cost_total,
+		  int &cost_each_man,
+		  int &cost_each_woman,
+		  int &cost_each_child)
+{
   if (argc == 5) { /* customize cost of each man, woman, child, and total cost */
     cost_total = atoi(argv[1]);
     cost_each_man = atoi(argv[2]);
@@ -35,16 +76,4 @@ int main(int argc, char **argv)
   } else {
     puts("\nWrong Params\nUsage[1]: %s\nUsage[2]: %s <cost_total> <cost_each_man> <cost_each_woman> <cost_each_child>", argv[0], argv[0]);
   }
-
-  int m_a, m_b;
-  int w_a, w_b;
-  int c_a, c_b;
-  m_a = 0, m_b = cost_total / cost_each_man + 1;
-
-}
-
-
-int cost(int n_men, int n_women, int n_child)
-{
-  return n_men * cost_each_man + n_women * cost_each_woman + n_child * cost_each_child;
 }

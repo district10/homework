@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/data">
+        <file>data/2d_points.txt</file>
+        <file>data/3d_points.txt</file>
+        <file>data/parameters.txt</file>
+        <file>data/log.txt</file>
+        <file>data/output.txt</file>
+    </qresource>
+</RCC>

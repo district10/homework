@@ -164,7 +164,7 @@ int main(int argc, char **argv)
 		  moravec_threshold);
 
   char *outpath = strcat("abc", ".raw");
-  puts("what?");
+  puts(outpath);
   save_img(&output_01_mask,
 	   outpath);
 

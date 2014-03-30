@@ -34,7 +34,7 @@ typedef struct {
 void help(int argc, char **argv);
 
 void printout_params(char *app, char *p, int r, int c, int k, int th);
-// void parse_params(int argc, char **argv, char *path, int *row, int *col, int *ker_size, int *thresh);
+void parse_params(int argc, char **argv, char *path, int *row, int *col, int *ker_size, int *thresh);
 
 void load_img(img_t *img, char *path, int row, int col);
 void save_img(img_t *img, char *path);
@@ -82,43 +82,15 @@ int main(int argc, char **argv)
   int thresh = 30;
 
   // Not work now...
-/* parse_params(argc,
+  parse_params(argc,
 	       argv,
 	       &path,
 	       &row,
 	       &col,
 	       &ker_size,
-	       &thresh);*/
-  
-  // So we do it explicitely
-  if (argc == 1) {
-    puts(">> Use Built-in Params.");
-  } else if (argc == 6) {
-    puts(">> Load Params from Console. Single Thresh");
-    path = argv[1];
-    row = atoi(argv[2]);
-    col = atoi(argv[3]);
-    ker_size = atoi(argv[4]);
-    thresh = atoi(argv[5]);
-  } else if (argc > 7) {
-    puts(">> Load Params from Console. Multi Thresh");
-    path = argv[1];
-    row = atoi(argv[2]);
-    col = atoi(argv[3]);
-    ker_size = atoi(argv[4]);
-    if (atoi(argv[5]) != 0) { // argv[5] is treated as a flag
-      puts("Multi Thresh Usage.");
-      printf(">>  %s <raw_img_path> <row> <col> <kernel_size> 0 <threshold1> <threshold2> ...\n", argv[0]);
-      exit (-1);
-    }
-    thresh = atoi(argv[6]); // this case, argv[6] as the threshold
-  } else { // Else? Else Print out Usage and then exit!
-    help(argc, argv);
-    exit (-1);
-  }
+	       &thresh);
 
   printout_params(argv[0], path, row, col, ker_size, thresh);
-
 
   puts(">>>>>>>>>>>>>> Load Image & Set Kernel Size, Threshold");
   load_img(&raw_src, path, row, col);
@@ -208,25 +180,25 @@ int main(int argc, char **argv)
  * ============================================================*/
 void help(int argc, char **argv)
 {
-    puts("****************************************************************");
-    puts(" * Moravec Point Feature Detector"); 
-    puts(" * @Author: Gnat TANG");
-    puts(" * @Email: gnat_tang@yeah.net");
-    puts(" * @Date: Wednesday, March 26 2014");
-    puts(" * @Github: https://github.com/district10/homework/2014/Photogrammetry/moravec.cpp");
-    puts("");
-    puts(" * How to compile: gcc -std=c99 moravec.c -o moravec -g -O0");
-    puts("");
-    puts(" * Usage(3 ways)");
-    printf(" *     [1] %s\n", argv[0]);
-    printf(" *     [2] %s <raw_img_path> <row> <col> <kernel_size> <threshold>\n", argv[0]);
-    printf(" *     [3] %s <raw_img_path> <row> <col> <kernel_size> 0 <threshold1> <threshold2> ...\n", argv[0]);
-    puts("");
-    puts(" * For example:");
-    puts(" *       [1]: ./moravec");
-    puts(" *       [2]: ./moravec data/u0367panLeft.raw 887 805 7 30");
-    puts(" *       [3]: ./moravec data/u0367panLeft.raw 887o 805 7 0 20 40 60 80");
-    return;
+  puts("****************************************************************");
+  puts(" * Moravec Point Feature Detector"); 
+  puts(" * @Author: Gnat TANG");
+  puts(" * @Email: gnat_tang@yeah.net");
+  puts(" * @Date: Wednesday, March 26 2014");
+  puts(" * @Github: https://github.com/district10/homework/2014/Photogrammetry/moravec.cpp");
+  puts("");
+  puts(" * How to compile: gcc -std=c99 moravec.c -o moravec -g -O0");
+  puts("");
+  puts(" * Usage(3 ways)");
+  printf(" *     [1] %s\n", argv[0]);
+  printf(" *     [2] %s <raw_img_path> <row> <col> <kernel_size> <threshold>\n", argv[0]);
+  printf(" *     [3] %s <raw_img_path> <row> <col> <kernel_size> 0 <threshold1> <threshold2> ...\n", argv[0]);
+  puts("");
+  puts(" * For example:");
+  puts(" *       [1]: ./moravec");
+  puts(" *       [2]: ./moravec data/u0367panLeft.raw 887 805 7 30");
+  puts(" *       [3]: ./moravec data/u0367panLeft.raw 887o 805 7 0 20 40 60 80");
+  return;
 }
 
 
@@ -241,37 +213,38 @@ void printout_params(char *app, char *p, int r, int c, int k, int th)
   return;
 }
 
-/*
+
 void parse_params(int argc, char **argv, char *path, int *row, int *col, int *ker_size, int *thresh)
 {
-    if (argc == 1) {
-      puts(">> Use Built-in Params.");
-    } else if (argc == 6) {
-      puts(">> Load Params from Console. Single Thresh");
-      path = argv[1];
-      row = atoi(argv[2]);
-      col = atoi(argv[3]);
-      ker_size = atoi(argv[4]);
-      thresh = atoi(argv[5]);
-    } else if (argc > 6) {
-      puts(">> Load Params from Console. Multi Thresh");
-      path = argv[1];
-      row = atoi(argv[2]);
-      col = atoi(argv[3]);
-      ker_size = atoi(argv[4]);
-      thresh = atoi(argv[5]);
-    } else { // Else? Else Print out Usage and then exit!
-      printf("****************** Moravec Feature Detector ********************\n");
-      printf("* Usage[2]: \n");
-      printf("* >>[1] %s <raw_img_path> <row> <col> <kernel_size> <threshold>\n", argv[0]);
-      printf("* >>[2]");
-      printf("****************************************************************\n");
+  if (argc == 1) {
+    puts(">> Use Built-in Params."); // Already Assigned at Declaration
+  } else if (argc == 6) {
+    puts(">> Load Params from Console. Single Thresh");
+    path = argv[1];
+    *row = atoi(argv[2]);
+    *col = atoi(argv[3]);
+    *ker_size = atoi(argv[4]);
+    *thresh = atoi(argv[5]);
+  } else if (argc > 7) {
+    puts(">> Load Params from Console. Multi Thresh");
+    path = argv[1];
+    *row = atoi(argv[2]);
+    *col = atoi(argv[3]);
+    *ker_size = atoi(argv[4]);
+    if (atoi(argv[5]) != 0) { // argv[5] is treated as a flag
+      puts("Multi Thresh Usage.");
+      printf(">>  %s <raw_img_path> <row> <col> <kernel_size> 0 <threshold1> <threshold2> ...\n", argv[0]);
       exit (-1);
     }
-    printout_params(argv[0], path, row, col, ker_size, thresh);
-    return;
+    *thresh = atoi(argv[6]); // this case, argv[6] as the threshold
+  } else { // Else? Else Print out Usage and then exit!
+    // Printout manual  
+    help(argc, argv);
+    exit (-1);
+  }
+  return;
 } 
-*/ 
+
 
 
 void load_img(img_t *img, char *path, int row, int col)

@@ -3,15 +3,19 @@
  * @Author: Gnat TANG
  * @Email: gnat_tang@yeah.net
  * @Date: Wednesday, March 26 2014
+ * @Github: https://github.com/district10/homework/2014/Photogrammetry/moravec.cpp
+ *
  * How to compile: gcc -std=c99 moravec.c -o moravec -g -O0
- * On Github: https://github.com/district10/homework/2014/Photogrammetry/moravec.cpp
+ * How to run for example(3 ways): 
+ *       [1]: ./moravec
+ *       [2]: ./moravec data/u0367panLeft.raw 887 805 7 30
+ *       [3]: ./moravec data/u0367panLeft.raw 887 805 7 0 20 40 60 80
  */
 
 
 #include <stdio.h>
 #include <stdlib.h> 
 #include <assert.h>
-
 
 
 /* ============================================================
@@ -27,8 +31,10 @@ typedef struct {
 /* ============================================================
  * = Declare Functions
  * ============================================================*/
+void help(int argc, char **argv);
+
 void printout_params(char *app, char *p, int r, int c, int k, int th);
-void parse_params(int argc, char **argv, char *path, int *row, int *col, int *ker_size, int *thresh);
+// void parse_params(int argc, char **argv, char *path, int *row, int *col, int *ker_size, int *thresh);
 
 void load_img(img_t *img, char *path, int row, int col);
 void save_img(img_t *img, char *path);
@@ -56,23 +62,23 @@ void apply_threshold(img_t in, img_t *out, int threshold);
  * ============================================================*/
 int main(int argc, char **argv)
 {
+  puts(">>>>>>>>>>>>>> Moravec Point Feature Detector");
+
   // Define Kernel Size and Moravec Threshold
   int moravec_kernel_size;
   int moravec_threshold;
 
   // Define raw-image holder 
   img_t raw_src;
-
-
-  
+ 
   /* ------------------------------------------------------------
    * Load Image and Init Kernel Size and Threshold
    * ------------------------------------------------------------*/
 
-  char *path = "u0367panLeft.raw";
+  char *path = "data/u0367panLeft.raw";
   int row = 887;
   int col = 805;
-  int ker_size = 7;
+  int ker_size = 3;
   int thresh = 30;
 
   // Not work now...
@@ -94,29 +100,34 @@ int main(int argc, char **argv)
     col = atoi(argv[3]);
     ker_size = atoi(argv[4]);
     thresh = atoi(argv[5]);
-  } else if (argc > 6) {
+  } else if (argc > 7) {
     puts(">> Load Params from Console. Multi Thresh");
     path = argv[1];
     row = atoi(argv[2]);
     col = atoi(argv[3]);
     ker_size = atoi(argv[4]);
-    thresh = atoi(argv[5]);
+    if (atoi(argv[5]) != 0) { // argv[5] is treated as a flag
+      puts("Multi Thresh Usage.");
+      printf(">>  %s <raw_img_path> <row> <col> <kernel_size> 0 <threshold1> <threshold2> ...\n", argv[0]);
+      exit (-1);
+    }
+    thresh = atoi(argv[6]); // this case, argv[6] as the threshold
   } else { // Else? Else Print out Usage and then exit!
-    printf("****************** Moravec Feature Detector ********************\n");
-    printf("* Usage[2]: \n");
-    printf("* >>[1] %s <raw_img_path> <row> <col> <kernel_size> <threshold>\n", argv[0]);
-    printf("* >>[2]");
-    printf("****************************************************************\n");
+    help(argc, argv);
     exit (-1);
   }
 
   printout_params(argv[0], path, row, col, ker_size, thresh);
 
 
+  puts(">>>>>>>>>>>>>> Load Image & Set Kernel Size, Threshold");
   load_img(&raw_src, path, row, col);
   set_moravec_kernel_size(&moravec_kernel_size, ker_size);
   set_moravec_threshold(&moravec_threshold, thresh);
-   
+
+  // check 
+  puts(">>>>>>>>>>>>>> Check Params");
+  printf("## Check:\n##>> r:%d, c:%d; k: %d, t: %d\n", row, col, moravec_kernel_size, moravec_threshold); 
 
   /* ------------------------------------------------------------
    *  Define Variables and then Processing
@@ -130,6 +141,7 @@ int main(int argc, char **argv)
   // output: as a mask
   img_t output_01_mask; 
 
+  puts(">>>>>>>>>>>>>> Differences");
   // DIFF 
   diff_left_right(raw_src,
 		  &raw_diff_l_r);
@@ -139,6 +151,8 @@ int main(int argc, char **argv)
 			   &raw_diff_tl_br);
   diff_topright_bottomleft(raw_src,
 			   &raw_diff_tr_bl);
+  
+  puts(">>>>>>>>>>>>>> SqSum"); 
   // SQSUM
   sqsum_left_right(raw_diff_l_r,
 		   &raw_sqsum_l_r,
@@ -152,6 +166,8 @@ int main(int argc, char **argv)
   sqsum_topright_bottomleft(raw_diff_tr_bl,
 			    &raw_sqsum_tr_bl,
 			    moravec_kernel_size);
+
+  puts(">>>>>>>>>>>>>> Min of Four"); 
   // MIN
   four2one(&output_sqsum_min, 
 	   raw_sqsum_l_r,
@@ -159,14 +175,28 @@ int main(int argc, char **argv)
 	   raw_sqsum_tl_br,
 	   raw_sqsum_tr_bl);
  
+  puts(">>>>>>>>>>>>>> Apply Threshold"); 
   apply_threshold(output_sqsum_min,
 		  &output_01_mask,
 		  moravec_threshold);
 
-  char *outpath = strcat("abc", ".raw");
-  puts(outpath);
-  save_img(&output_01_mask,
-	   outpath);
+  char outpath[60];
+  sprintf(outpath, "thrld_%d.%s", moravec_threshold, "raw");
+  printf(">> Save to file: %s", outpath);
+  save_img(&output_01_mask, outpath);
+
+  // if there are other thresholds
+  if (atoi(argv[5]) == 0) {
+    for (int t = 7; t < argc; ++t) {
+      set_moravec_threshold(&moravec_threshold, atoi(argv[t]));
+      apply_threshold(output_sqsum_min,
+		      &output_01_mask,
+		      moravec_threshold);
+      sprintf(outpath, "thrld_%d.%s", moravec_threshold, "raw");
+      printf(">> Save to file: %s", outpath);
+      save_img(&output_01_mask, outpath);
+    }
+  }
 
   return 0;
 }
@@ -176,6 +206,30 @@ int main(int argc, char **argv)
 /* ============================================================
  * = Implement Functions
  * ============================================================*/
+void help(int argc, char **argv)
+{
+    puts("****************************************************************");
+    puts(" * Moravec Point Feature Detector"); 
+    puts(" * @Author: Gnat TANG");
+    puts(" * @Email: gnat_tang@yeah.net");
+    puts(" * @Date: Wednesday, March 26 2014");
+    puts(" * @Github: https://github.com/district10/homework/2014/Photogrammetry/moravec.cpp");
+    puts("");
+    puts(" * How to compile: gcc -std=c99 moravec.c -o moravec -g -O0");
+    puts("");
+    puts(" * Usage(3 ways)");
+    printf(" *     [1] %s\n", argv[0]);
+    printf(" *     [2] %s <raw_img_path> <row> <col> <kernel_size> <threshold>\n", argv[0]);
+    printf(" *     [3] %s <raw_img_path> <row> <col> <kernel_size> 0 <threshold1> <threshold2> ...\n", argv[0]);
+    puts("");
+    puts(" * For example:");
+    puts(" *       [1]: ./moravec");
+    puts(" *       [2]: ./moravec data/u0367panLeft.raw 887 805 7 30");
+    puts(" *       [3]: ./moravec data/u0367panLeft.raw 887o 805 7 0 20 40 60 80");
+    return;
+}
+
+
 void printout_params(char *app, char *p, int r, int c, int k, int th)
 {
   printf(">>>> Exe: %s\n", app);
@@ -187,7 +241,7 @@ void printout_params(char *app, char *p, int r, int c, int k, int th)
   return;
 }
 
-
+/*
 void parse_params(int argc, char **argv, char *path, int *row, int *col, int *ker_size, int *thresh)
 {
     if (argc == 1) {
@@ -216,20 +270,21 @@ void parse_params(int argc, char **argv, char *path, int *row, int *col, int *ke
     }
     printout_params(argv[0], path, row, col, ker_size, thresh);
     return;
-}  
+} 
+*/ 
 
 
 void load_img(img_t *img, char *path, int row, int col)
 {
   img->row = row;
   img->col = col;
-  img->src = (unsigned char *)malloc(sizeof(unsigned char) * img->row * img->col); 
+  img->src = (unsigned char *)malloc(sizeof(unsigned char) * row * col); 
   FILE *fp = fopen(path, "r");
   if (fp == NULL) {
-    perror("Error Opening Raw Image File.\n");
+    perror("Error Opening Raw Image File to Read.\n");
     exit(-1);
   }
-  fgets(img->src, img->row * img->col, fp);
+  fgets(img->src, row * col, fp);
   fclose(fp);
   printf(">> Load image: %s %d x %d done.\n", path, row, col);
   return;
@@ -240,10 +295,17 @@ void save_img(img_t *img, char *path)
 {
   FILE *fp = fopen(path, "w");
   if (fp == NULL) {
-    perror("Error Opening Raw Image File.\n");
+    perror("Error Opening Raw Image File to Write.\n");
     exit(-1);
   }
-  fputs(img->src, fp);
+  // fputs(img->src, fp); not work
+  int row = img->row;
+  int col = img->col;
+  for (int i = 0; i < row; ++i) {
+    for (int j = 0; j < col; ++j) {
+      fputc(img->src[i * col + j], fp);
+    }
+  }
   fclose(fp);
   printf(">> Save image: %d x %d to %s done.\n", img->row, img->col, path);
   return;
@@ -253,19 +315,20 @@ void save_img(img_t *img, char *path)
 void set_moravec_kernel_size(int *k_size, int size)
 {
   // odd kernel size 
-  k_size = size % 2 == 1? size : size + 1;
-  if (k_size < 0 || k_size > 10) {
-    k_size = 7;
+  int s = (size % 2 == 1)? size : size + 1;
+  if (s < 0 || s > 10) {
+    s = 7;
   }
-  printf(">> Set Moravec Kernel Size to %d done.\n", k_size);
+  *k_size = s;
+  printf(">> Set Moravec Kernel Size to %d done.\n", *k_size);
   return;
 }
 
 
 void set_moravec_threshold(int *thresh, int th)
 {
-  thresh = (th < 200 && th > 10)? th : 20;
-  printf(">> Set Moravec Threshold to %d done.\n", thresh);
+  *thresh = (th < 200 && th > 10)? th : 20;
+  printf(">> Set Moravec Threshold to %d done.\n", *thresh);
   return;
 }
 
@@ -284,7 +347,7 @@ void diff_left_right(img_t in, img_t *out)
       out->src[i * col + j] = (unsigned char)abs((int)tmp);
     }
   }
-  puts(">>>> DIFF -- left right done");
+  puts(">> DIFF -- left right done");
   return; 
 }
 
@@ -303,7 +366,7 @@ void diff_top_bottom(img_t in, img_t *out)
       out->src[i * col + j] = (unsigned char)abs((int)tmp);
     }
   }
-  puts(">>>> DIFF -- top bottom done");
+  puts(">> DIFF -- top bottom done");
   return; 
 }
 
@@ -322,7 +385,7 @@ void diff_topleft_bottomright(img_t in, img_t *out)
       out->src[i * col + j] = (unsigned char)abs((int)tmp);
     }
   }
-  puts(">>>> DIFF -- top_left bottom_right done");
+  puts(">> DIFF -- top_left bottom_right done");
   return; 
 }
 
@@ -341,7 +404,7 @@ void diff_topright_bottomleft(img_t in, img_t *out)
       out->src[i * col + j] = (unsigned char)abs((int)tmp);
     }
   }
-  puts(">>>> DIFF -- top_right bottom_left done");
+  puts(">> DIFF -- top_right bottom_left done");
   return; 
 }
 
@@ -374,7 +437,7 @@ void sqsum_left_right(img_t in, img_t *out, int kernel_size)
       out->src[i * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
     }
   }
-  puts(">>>> SqSum -- left right done");
+  puts(">> SqSum -- left right done");
   return;
     
 }
@@ -414,7 +477,7 @@ void sqsum_top_bottom(img_t in, img_t *out, int kernel_size)
       out->src[i * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
     }
   }
-  puts(">>>> SqSum -- top bottom done");
+  puts(">> SqSum -- top bottom done");
   return;
 }
 
@@ -465,7 +528,7 @@ void sqsum_topleft_bottomright(img_t in, img_t *out, int kernel_size)
       out->src[i * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
     }
   }
-  puts(">>>> SqSum -- top_left bottom_right done");
+  puts(">> SqSum -- top_left bottom_right done");
   return;
 }
 
@@ -516,7 +579,7 @@ void sqsum_topright_bottomleft(img_t in, img_t *out, int kernel_size)
       out->src[i * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
     }
   }
-  puts(">>>> SqSum -- top_right bottom_left done");
+  puts(">> SqSum -- top_right bottom_left done");
   return;
 }
 
@@ -546,7 +609,7 @@ void four2one(img_t *out, img_t l_r, img_t t_b, img_t lt_br, img_t lr_bl)
       out->src[i * col + j] = tmp3;
     }  
   }
-  puts(">> Four2One done");
+  puts(">> Four 2 One done");
   return;
 }
 

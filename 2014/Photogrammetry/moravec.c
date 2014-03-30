@@ -12,6 +12,7 @@
 #include <assert.h>
 
 
+
 /* ============================================================
  * = Define Image Datatype
  * ============================================================*/
@@ -22,27 +23,30 @@ typedef struct {
 } img_t;
 
 
+
 /* ============================================================
  * = Declare Functions
  * ============================================================*/
-void load_img(img_t &img_src, char *img_path);
-void save_img(img_t &img_src, char *img_path);
+void load_img(img_t img, char *path, int row, int col);
+void save_img(img_t img, char *path);
 
-void set_moravec_kernel_size(int kernel_size, int size); 
-void set_moravec_threshold(int threshold, int th);
+void set_moravec_kernel_size(int k_size, int size);
+void set_moravec_threshold(int thresh, int th);
 
-void diff_left_right(img_t img_from, img_t &img_to);
-void diff_top_bottom(img_t img_from, img_t &img_to);
-void diff_topleft_bottomright(img_t img_from, img_t &img_to);
-void diff_topright_bottomleft(img_t img_from, img_t &img_to);
+void diff_left_right(img_t in, img_t out);
+void diff_top_bottom(img_t in, img_t out);
+void diff_topleft_bottomright(img_t in, img_t out);
+void diff_topright_bottomleft(img_t in, img_t out);
 
-void sqsum_left_right(img_t input, int kernel_size);
-void sqsum_top_bottom(img_t input, int kernel_size);
-void sqsum_topleft_bottomright(img_t input, int kernel_size);
-void sqsum_topright_bottomleft(img_t input, int kernel_size);
+void sqsum_left_right(img_t in, img_t out, int kernel_size);
+void sqsum_top_bottom(img_t in, img_t out, int kernel_size);
+void sqsum_topleft_bottomright(img_t in, img_t out, int kernel_size);
+void sqsum_topright_bottomleft(img_t in, img_t out, int kernel_size);
 
-void four2one(img_t l_r, img_t t_b, img_t lt_br, img_t lr_bl, int k_size);
+void four2one(img_t out, img_t l_r, img_t t_b, img_t lt_br, img_t lr_bl);
 void apply_threshold(img_t in, img_t out, int threshold);
+
+
 
 /* ============================================================
  * = Main
@@ -53,7 +57,7 @@ int main(int argc, char **argv)
   int moravec_kernel_size;
   int moravec_threshold;
 
-  // Define raw image input holder 
+  // Define raw-image holder 
   img_t raw_src;
 
   /* ------------------------------------------------------------
@@ -63,7 +67,7 @@ int main(int argc, char **argv)
     load_img(&raw_src, argv[1], atoi(argv[2]), atoi(argv[3]));
     set_moravec_kernel_size(&moravec_kernel_size, atoi(argv[4]));
     set_moravec_threshold(&moravec_threshold, atoi(argv[5]));
-  } else if (argc == 0) { // Use default(built-in) Params
+  } else if (argc == 1) { // Use default(built-in) Params
     load_img(&raw_src, "lena.raw", 300, 300);
     set_moravec_threshold(&moravec_threshold, 30);
     set_moravec_kernel_size(&moravec_kernel_size, 7);
@@ -75,17 +79,16 @@ int main(int argc, char **argv)
     return -1;
   }
   
-
   /* ------------------------------------------------------------
    *  Define Variables and then Processing
    * ------------------------------------------------------------*/
   // Differences
   img_t raw_diff_l_r, raw_diff_t_b, raw_diff_tl_br, raw_diff_tr_bl;
-  // Square Sum of Differences
+  // Square Sums of Differences
   img_t raw_sqsum_l_r, raw_sqsum_t_b, raw_sqsum_tl_br, raw_sqsum_tr_bl; 
   // Min of Squares
   img_t output_sqsum_min; 
-  // output
+  // output: as a mask
   img_t output_01_mask; 
 
   // DIFF 
@@ -121,6 +124,11 @@ int main(int argc, char **argv)
 		  &output_01_mask,
 		  moravec_threshold);
 
+  char *outpath = "output.raw";
+  save_img(&output_01_mask,
+	   outpath);
+
+  return 0;
 }
 
 
@@ -139,10 +147,12 @@ void load_img(img_t img, char *path, int row, int col)
     exit(-1);
   }
   fgets(img.src, img.row * img.col, fp);
-  
+  fclose(fp);
+  return;
 }
 
-void save_img(img_t &img, char *path)
+
+void save_img(img_t img, char *path)
 {
   FILE *fp = fopen(img_path, "w");
   if (fp == NULL) {
@@ -150,26 +160,28 @@ void save_img(img_t &img, char *path)
     exit(-1);
   }
   fputs(img.src, fp);
-  
+  fclose(fp);
+  return;
 }
 
 
-
-void set_moravec_kernel_size(int size)
+void set_moravec_kernel_size(int k_size, int size)
 {
-  if (size % 2 == 1) { // odd kernel size
-    moravec_kernel_size = size;
-    return;  
-  } else { // we don't accept even kernel size
-    exit(-1);
+  // odd kernel size 
+  k_size = size % 2 == 1? size : size + 1;
+  if (k_size < 0 || k_size > 10) {
+    k_size = 7;
   }
+  return;
 }
+
 
 void set_moravec_threshold(int thresh, int th)
 {
-  thresh = th;
+  thresh = (th < 200 && th > 10)? th : 20;
   return;
 }
+
 
 void diff_left_right(img_t in, img_t out)
 {
@@ -181,13 +193,12 @@ void diff_left_right(img_t in, img_t out)
   for (int i = 0; i < row; ++i) {
     for (int j = 0; j < col; ++j) {
       static unsigned char tmp;
-      tmp = in.src[i * (col + 1) + j + 1] - in.src[i * (col + 1) + j]; 
+      tmp = in.src[i * in.col + j + 1] - in.src[i * in.col + j]; 
       out.src[i * col + j] = (unsigned char)abs((int)tmp);
     }
   }
   return; 
 }
-
 
 
 void diff_top_bottom(img_t in, img_t out)
@@ -200,7 +211,7 @@ void diff_top_bottom(img_t in, img_t out)
   for (int i = 0; i < row; ++i) {
     for (int j = 0; j < col; ++j) {
       static unsigned char tmp;
-      tmp = in.src[(i + 1) * col + j] - in.src[i * col + j];
+      tmp = in.src[(i + 1) * in.col  + j] - in.src[i * in.col + j];
       out.src[i * col + j] = (unsigned char)abs((int)tmp);
     }
   }
@@ -218,7 +229,7 @@ void diff_topleft_bottomright(img_t in, img_t out);
   for (int i = 0; i < row; ++i) {
     for (int j = 0; j < col; ++j) {
       static unsigned char tmp;
-      tmp = in.src[(i + 1) * (col + 1) + j + 1] - in.src[i * (col + 1) + j];
+      tmp = in.src[(i + 1) * in.col + j + 1] - in.src[i * in.col + j];
       out.src[i * col + j] = (unsigned char)abs((int)tmp);
     }
   }
@@ -236,12 +247,13 @@ void diff_topright_bottomleft(img_t in, img_t out);
   for (int i = 0; i < row; ++i) {
     for (int j = 0; j < col; ++j) {
       static unsigned char tmp;
-      tmp = in.src[(i + 1) * (col + 1) + j] - in.src[i * (col + 1) + j + 1];
+      tmp = in.src[(i + 1) * in.col + j] - in.src[i * in.col + j + 1];
       out.src[i * col + j] = (unsigned char)abs((int)tmp);
     }
   }
   return; 
 }
+
 
 void sqsum_left_right(img_t in, img_t out, int kernel_size)
 {
@@ -259,13 +271,13 @@ void sqsum_left_right(img_t in, img_t out, int kernel_size)
     for (int k = 0; k < kernel_size; ++t) {
       tmp_sqsum += in.src[(i + max_offset) * in.col + k] * in.src[(i + max_offset) * in.col + k];
     }
-    // assign the first elem
+    // assign first elem of the ith row
     out.src[i * col + 0] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
     // assign other elems
     for (int j = 1; j < out.col; ++j) {
       static int add = in.src[(i + max_offset) * in.col + j + max_offset + max_offset];
       static int sub = in.src[(i + max_offset) * in.col + j + max_offset - max_offset];
-      tmp_sqsum = tmp_sqsum - sub + add;
+      tmp_sqsum = tmp_sqsum - sub * sub + add * add;
       out.src[i * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
     }
   }
@@ -301,12 +313,11 @@ void sqsum_top_bottom(img_t in, img_t out, int kernel_size)
       tmp_sqsum = out.src[(i - 1) * col + j]; // assign sqsum to previous row 
       static int add = in.src[(i + max_offse + max_offset) * in.col + j + max_offset];
       static int sub = in.src[(i + max_offse - max_offset) * in.col + j + max_offset];
-      tmp_sqsum = tmp_sqsum - sub + add;
+      tmp_sqsum = tmp_sqsum - sub * sub + add * add;
       out.src[i * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
     }
   }
-}
-return;
+  return;
 }
 
 
@@ -338,12 +349,11 @@ void sqsum_topleft_bottomright(img_t in, img_t out, int kernel_size)
     tmp_sqsum = 0;
     // sum kernel_size elems,
     for (int k = 0; k < kernel_size; ++t) {
-      tmp_sqsum += in.src[(i + k) * in.col + k] + in.src[(i + k) * in.col + k];
+      tmp_sqsum += in.src[(i + k) * in.col + k] * in.src[(i + k) * in.col + k];
     }
     // assign the first col
-    out.src[i * col + i] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
+    out.src[i * col + 0] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
   }
-
 
   // others elems
   for (int i = 1; j < out.row; ++i) {
@@ -351,14 +361,14 @@ void sqsum_topleft_bottomright(img_t in, img_t out, int kernel_size)
       tmp_sqsum = out.src[(i - 1) * col + j - 1]; // assign sqsum to its parent(northwest)
       static int add = in.src[(i + max_offse + max_offset) * in.col + j + max_offset];
       static int sub = in.src[(i + max_offse - max_offset) * in.col + j + max_offset];
-      tmp_sqsum = tmp_sqsum - sub + add;
+      tmp_sqsum = tmp_sqsum - sub * sub  + add * add;
       out.src[i * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
     }
   }
+  return;
 }
-return;
 
-}
+
 void sqsum_topright_bottomleft(img_t in, img_t out, int kernel_size)
 {
   int row = in.row + 1;
@@ -387,12 +397,11 @@ void sqsum_topright_bottomleft(img_t in, img_t out, int kernel_size)
     tmp_sqsum = 0;
     // sum kernel_size elems,
     for (int k = 0; k < kernel_size; ++t) {
-      tmp_sqsum += in.src[(i + max_offset + k) * in.col + in.col - 1 - k] * in.src[(i + max_offset + k) * in.col + in.col - 1 - k];
+      tmp_sqsum += in.src[(i - max_offset + k) * in.col + in.col - 1 - k] * in.src[(i - max_offset + k) * in.col + in.col - 1 - k];
     }
     // assign the first col
     out.src[i * col + i] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
   }
-
 
   // others elems
   for (int i = 1; j < out.row; ++i) {
@@ -400,18 +409,15 @@ void sqsum_topright_bottomleft(img_t in, img_t out, int kernel_size)
       tmp_sqsum = out.src[(i - 1) * col + j + 1]; // assign sqsum to its parent(northeast)
       static int add = in.src[(i + max_offset + max_offset) * in.col + j + max_offset];
       static int sub = in.src[(i + max_offset - max_offset) * in.col + j + max_offset];
-      tmp_sqsum = tmp_sqsum - sub + add;
+      tmp_sqsum = tmp_sqsum - sub * sub + add * add;
       out.src[i * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
     }
   }
-}
-return;
-
-
+  return;
 }
 
 
-void four2one(img_t out, img_t l_r, img_t t_b, img_t lt_br, img_t lr_bl, int k_size)
+void four2one(img_t out, img_t l_r, img_t t_b, img_t lt_br, img_t lr_bl)
 {
   int row = l_r.row;
   int col = l_r.col;
@@ -426,6 +432,7 @@ void four2one(img_t out, img_t l_r, img_t t_b, img_t lt_br, img_t lr_bl, int k_s
   out.row = row;
   out.col = col;
   out.src = (unsigned char *)malloc(sizeof(unsigned char) * out.row * out.col); 
+  
   for (int i = 0; i < row; ++i) {
     for (int j = 0; j < col; ++j) {
       static unsigned char tmp1, tmp2, tmp3;
@@ -444,6 +451,7 @@ void apply_threshold(img_t in, img_t out, int threshold)
   out.row = in.row;
   out.col = in.col;
   out.src = (unsigned char *)malloc(sizeof(unsigned char) * out.row * out.col); 
+  
   for (int i = 0; i < row; ++i) {
     for (int j = 0; j < col; ++j) {
       out.src[i * col + j] = in.src[i * col + j] > threshold? 0 : 1; 
@@ -451,5 +459,3 @@ void apply_threshold(img_t in, img_t out, int threshold)
   }
   return;
 }
-
-

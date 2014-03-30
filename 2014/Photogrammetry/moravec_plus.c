@@ -3,7 +3,7 @@
  * @Author: Gnat TANG
  * @Email: gnat_tang@yeah.net
  * @Date: Wednesday, March 26 2014
- * How to compile: gcc -std=c99 moravec.c -o moravec -g -O0
+ * How to compile: gcc -std=c99 moravec_plus.c -o moravec_plus -g -O0
  * On Github: https://github.com/district10/homework/2014/Photogrammetry/moravec.cpp
  */
 
@@ -22,6 +22,7 @@ typedef struct {
   int row;
   int col;
 } img_t;
+
 
 
 /* ============================================================
@@ -64,54 +65,23 @@ int main(int argc, char **argv)
   img_t raw_src;
 
 
-  
-  /* ------------------------------------------------------------
-   * Load Image and Init Kernel Size and Threshold
-   * ------------------------------------------------------------*/
-
   char *path = "u0367panLeft.raw";
   int row = 887;
   int col = 805;
   int ker_size = 7;
   int thresh = 30;
-
-  // Not work now...
-/* parse_params(argc,
+  
+  /* ------------------------------------------------------------
+   * Load Image and Init Kernel Size and Threshold
+   * ------------------------------------------------------------*/
+  
+  parse_params(argc,
 	       argv,
 	       &path,
 	       &row,
 	       &col,
 	       &ker_size,
-	       &thresh);*/
-  
-  // So we do it explicitely
-  if (argc == 1) {
-    puts(">> Use Built-in Params.");
-  } else if (argc == 6) {
-    puts(">> Load Params from Console. Single Thresh");
-    path = argv[1];
-    row = atoi(argv[2]);
-    col = atoi(argv[3]);
-    ker_size = atoi(argv[4]);
-    thresh = atoi(argv[5]);
-  } else if (argc > 6) {
-    puts(">> Load Params from Console. Multi Thresh");
-    path = argv[1];
-    row = atoi(argv[2]);
-    col = atoi(argv[3]);
-    ker_size = atoi(argv[4]);
-    thresh = atoi(argv[5]);
-  } else { // Else? Else Print out Usage and then exit!
-    printf("****************** Moravec Feature Detector ********************\n");
-    printf("* Usage[2]: \n");
-    printf("* >>[1] %s <raw_img_path> <row> <col> <kernel_size> <threshold>\n", argv[0]);
-    printf("* >>[2]");
-    printf("****************************************************************\n");
-    exit (-1);
-  }
-
-  printout_params(argv[0], path, row, col, ker_size, thresh);
-
+	       &thresh);
 
   load_img(&raw_src, path, row, col);
   set_moravec_kernel_size(&moravec_kernel_size, ker_size);
@@ -164,7 +134,6 @@ int main(int argc, char **argv)
 		  moravec_threshold);
 
   char *outpath = strcat("abc", ".raw");
-  puts("what?");
   save_img(&output_01_mask,
 	   outpath);
 

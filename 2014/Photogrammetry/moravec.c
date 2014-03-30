@@ -3,7 +3,7 @@
  * @Author: Gnat TANG
  * @Email: gnat_tang@yeah.net
  * @Date: Wednesday, March 26 2014
- * @Github: https://github.com/district10/homework/2014/Photogrammetry/moravec.cpp
+ * @Github: https://github.com/district10/homework/blob/master/2014/Photogrammetry/moravec.c
  *
  * How to compile: gcc -std=c99 moravec.c -o moravec -g -O0
  * How to run for example(3 ways): 

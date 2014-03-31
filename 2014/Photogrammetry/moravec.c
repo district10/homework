@@ -1,4 +1,4 @@
-/*
+r/*
  * Moravec Point Feature Detector
  * @Author: Gnat TANG
  * @Email: gnat_tang@yeah.net

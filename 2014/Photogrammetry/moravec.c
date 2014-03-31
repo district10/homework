@@ -1,4 +1,4 @@
-r/*
+/*
  * Moravec Point Feature Detector
  * @Author: Gnat TANG
  * @Email: gnat_tang@yeah.net
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
   // Not work now...
   parse_params(argc,
 	       argv,
-	       &path,
+	       path,
 	       &row,
 	       &col,
 	       &ker_size,

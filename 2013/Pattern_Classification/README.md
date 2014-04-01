@@ -1,8 +1,8 @@
 Pattern_Classification
 ======================
 
-pattern classification homework
+#### pattern classification homework
 
-See [here](https://github.com/district10/Pattern_Classification) 
+##### See [here](https://github.com/district10/Pattern_Classification) 
 
 

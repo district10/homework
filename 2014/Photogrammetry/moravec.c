@@ -27,6 +27,12 @@ typedef struct {
   int col;
 } img_t;
 
+typedef struct {
+  int *src;
+  int row;
+  int col;
+} img_int_t;
+
 
 /* ============================================================
  * = Declare Functions
@@ -47,13 +53,13 @@ void diff_top_bottom(img_t in, img_t *out);
 void diff_topleft_bottomright(img_t in, img_t *out);
 void diff_topright_bottomleft(img_t in, img_t *out);
 
-void sqsum_left_right(img_t in, img_t *out, int kernel_size);
-void sqsum_top_bottom(img_t in, img_t *out, int kernel_size);
-void sqsum_topleft_bottomright(img_t in, img_t *out, int kernel_size);
-void sqsum_topright_bottomleft(img_t in, img_t *out, int kernel_size);
+void sqsum_left_right(img_t in, img_int_t *out, int kernel_size);
+void sqsum_top_bottom(img_t in, img_int_t *out, int kernel_size);
+void sqsum_topleft_bottomright(img_t in, img_int_t *out, int kernel_size);
+void sqsum_topright_bottomleft(img_t in, img_int_t *out, int kernel_size);
 
-void four2one(img_t *out, img_t l_r, img_t t_b, img_t lt_br, img_t lr_bl);
-void apply_threshold(img_t in, img_t *out, int threshold);
+void four2one(img_int_t *out, img_int_t l_r, img_int_t t_b, img_int_t lt_br, img_int_t lr_bl);
+void apply_threshold(img_int_t in, img_t *out, int threshold);
 
 
 
@@ -62,8 +68,6 @@ void apply_threshold(img_t in, img_t *out, int threshold);
  * ============================================================*/
 int main(int argc, char **argv)
 {
-  puts(">>>>>>>>>>>>>> Moravec Point Feature Detector");
-
   // Define Kernel Size and Moravec Threshold
   int moravec_kernel_size;
   int moravec_threshold;
@@ -81,14 +85,8 @@ int main(int argc, char **argv)
   int ker_size = 3;
   int thresh = 30;
 
-  // Not work now...
-  parse_params(argc,
-	       argv,
-	       path,
-	       &row,
-	       &col,
-	       &ker_size,
-	       &thresh);
+  puts(">>>>>>>>>>>>>> Moravec Point Feature Detector");
+  parse_params(argc, argv, path, &row, &col, &ker_size, &thresh);
 
   printout_params(argv[0], path, row, col, ker_size, thresh);
 
@@ -99,7 +97,12 @@ int main(int argc, char **argv)
 
   // check 
   puts(">>>>>>>>>>>>>> Check Params");
-  printf("## Check:\n##>> r:%d, c:%d; k: %d, t: %d\n", row, col, moravec_kernel_size, moravec_threshold); 
+  printf("## Check:\n##>> r:%d, c:%d; k: %d, t: %d\n",
+	 row,
+	 col,
+	 moravec_kernel_size,
+	 moravec_threshold); 
+
 
   /* ------------------------------------------------------------
    *  Define Variables and then Processing
@@ -107,9 +110,9 @@ int main(int argc, char **argv)
   // Differences
   img_t raw_diff_l_r, raw_diff_t_b, raw_diff_tl_br, raw_diff_tr_bl;
   // Square Sums of Differences
-  img_t raw_sqsum_l_r, raw_sqsum_t_b, raw_sqsum_tl_br, raw_sqsum_tr_bl; 
+  img_int_t raw_sqsum_l_r, raw_sqsum_t_b, raw_sqsum_tl_br, raw_sqsum_tr_bl; 
   // Min of Squares
-  img_t output_sqsum_min; 
+  img_int_t output_sqsum_min; 
   // output: as a mask
   img_t output_01_mask; 
 
@@ -158,7 +161,7 @@ int main(int argc, char **argv)
   save_img(&output_01_mask, outpath);
 
   // if there are other thresholds
-  if (atoi(argv[5]) == 0) {
+  if (argc > 7 && atoi(argv[5]) == 0) {
     for (int t = 7; t < argc; ++t) {
       set_moravec_threshold(&moravec_threshold, atoi(argv[t]));
       apply_threshold(output_sqsum_min,
@@ -185,7 +188,7 @@ void help(int argc, char **argv)
   puts(" * @Author: Gnat TANG");
   puts(" * @Email: gnat_tang@yeah.net");
   puts(" * @Date: Wednesday, March 26 2014");
-  puts(" * @Github: https://github.com/district10/homework/2014/Photogrammetry/moravec.cpp");
+  puts(" * @Github: https://github.com/district10/homework/blob/master/2014/Photogrammetry/moravec.c");
   puts("");
   puts(" * How to compile: gcc -std=c99 moravec.c -o moravec -g -O0");
   puts("");
@@ -246,7 +249,6 @@ void parse_params(int argc, char **argv, char *path, int *row, int *col, int *ke
 } 
 
 
-
 void load_img(img_t *img, char *path, int row, int col)
 {
   img->row = row;
@@ -287,7 +289,7 @@ void save_img(img_t *img, char *path)
 
 void set_moravec_kernel_size(int *k_size, int size)
 {
-  // odd kernel size 
+  // only odd kernel size 
   int s = (size % 2 == 1)? size : size + 1;
   if (s < 0 || s > 10) {
     s = 7;
@@ -382,13 +384,13 @@ void diff_topright_bottomleft(img_t in, img_t *out)
 }
 
 
-void sqsum_left_right(img_t in, img_t *out, int kernel_size)
+void sqsum_left_right(img_t in, img_int_t *out, int kernel_size)
 {
   int row = in.row;
   int col = in.col + 1; 
   out->row = row - (kernel_size - 1);
   out->col = col - (kernel_size - 1);
-  out->src = (unsigned char *)malloc(sizeof(unsigned char) * row * col); 
+  out->src = (int *)malloc(sizeof(int) * row * col); 
   int max_offset = (kernel_size - 1) / 2;
   int tmp_sqsum = 0;
   for (int i = 0; i < row; ++i) {
@@ -399,15 +401,14 @@ void sqsum_left_right(img_t in, img_t *out, int kernel_size)
       tmp_sqsum += in.src[(i + max_offset) * in.col + k] * in.src[(i + max_offset) * in.col + k];
     }
     // assign first elem of the ith row
-    out->src[i * col + 0] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
+    out->src[i * col + 0] = tmp_sqsum;
     // assign other elems
     for (int j = 1; j < col; ++j) {
-      static int add = 0;
+      static int add, sub;
       add = in.src[(i + max_offset) * in.col + j + max_offset + max_offset];
-      static int sub = 0;
       sub = in.src[(i + max_offset) * in.col + j + max_offset - max_offset];
       tmp_sqsum = tmp_sqsum - sub * sub + add * add;
-      out->src[i * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
+      out->src[i * col + j] = tmp_sqsum;
     }
   }
   puts(">> SqSum -- left right done");
@@ -416,13 +417,13 @@ void sqsum_left_right(img_t in, img_t *out, int kernel_size)
 }
 
 
-void sqsum_top_bottom(img_t in, img_t *out, int kernel_size)
+void sqsum_top_bottom(img_t in, img_int_t *out, int kernel_size)
 {
   int row = in.row + 1;
   int col = in.col; 
   out->row = row - (kernel_size - 1);
   out->col = col - (kernel_size - 1);
-  out->src = (unsigned char *)malloc(sizeof(unsigned char) * row * col); 
+  out->src = (int *)malloc(sizeof(int) * row * col); 
   int max_offset = (kernel_size - 1) / 2;
   int tmp_sqsum = 0;
 
@@ -435,19 +436,18 @@ void sqsum_top_bottom(img_t in, img_t *out, int kernel_size)
       tmp_sqsum += in.src[k * in.col + j + max_offset] * in.src[k * in.col + j + max_offset];
     }
     // assign the first row
-    out->src[0 * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
+    out->src[0 * col + j] = tmp_sqsum;
   }
 
   // others rows
   for (int i = 1; i < row; ++i) {
     for (int j = 0; j < col; ++j) {
       tmp_sqsum = out->src[(i - 1) * col + j]; // assign sqsum to previous row 
-      static int add = 0;
+      static int add, sub;
       add = in.src[(i + max_offset + max_offset) * in.col + j + max_offset];
-      static int sub = 0;
       sub = in.src[(i + max_offset - max_offset) * in.col + j + max_offset];
       tmp_sqsum = tmp_sqsum - sub * sub + add * add;
-      out->src[i * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
+      out->src[i * col + j] = tmp_sqsum;
     }
   }
   puts(">> SqSum -- top bottom done");
@@ -455,13 +455,13 @@ void sqsum_top_bottom(img_t in, img_t *out, int kernel_size)
 }
 
 
-void sqsum_topleft_bottomright(img_t in, img_t *out, int kernel_size)
+void sqsum_topleft_bottomright(img_t in, img_int_t *out, int kernel_size)
 {
   int row = in.row + 1;
   int col = in.col + 1; 
   out->row = row - (kernel_size - 1);
   out->col = col - (kernel_size - 1);
-  out->src = (unsigned char *)malloc(sizeof(unsigned char) * row * col); 
+  out->src = (int *)malloc(sizeof(int) * row * col); 
   int max_offset = (kernel_size - 1) / 2;
   int tmp_sqsum = 0;
 
@@ -474,7 +474,7 @@ void sqsum_topleft_bottomright(img_t in, img_t *out, int kernel_size)
       tmp_sqsum += in.src[k * in.col + j + k] * in.src[k * in.col + j + k];
     }
     // assign the first row
-    out->src[0 * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
+    out->src[0 * col + j] = tmp_sqsum;
   }
 
   // first col, (except the first elem, aka topleft elem)
@@ -493,12 +493,11 @@ void sqsum_topleft_bottomright(img_t in, img_t *out, int kernel_size)
   for (int i = 1; i < row; ++i) {
     for (int j = 1; j < col; ++j) {
       tmp_sqsum = out->src[(i - 1) * col + j - 1]; // assign sqsum to its parent(northwest)
-      static int add = 0;
+      static int add, sub;
       add = in.src[(i + max_offset + max_offset) * in.col + j + max_offset];
-      static int sub = 0;
       sub = in.src[(i + max_offset - max_offset) * in.col + j + max_offset];
       tmp_sqsum = tmp_sqsum - sub * sub  + add * add;
-      out->src[i * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
+      out->src[i * col + j] = tmp_sqsum;
     }
   }
   puts(">> SqSum -- top_left bottom_right done");
@@ -506,13 +505,13 @@ void sqsum_topleft_bottomright(img_t in, img_t *out, int kernel_size)
 }
 
 
-void sqsum_topright_bottomleft(img_t in, img_t *out, int kernel_size)
+void sqsum_topright_bottomleft(img_t in, img_int_t *out, int kernel_size)
 {
   int row = in.row + 1;
   int col = in.col + 1; 
   out->row = row - (kernel_size - 1);
   out->col = col - (kernel_size - 1);
-  out->src = (unsigned char *)malloc(sizeof(unsigned char) * row * col); 
+  out->src = (int *)malloc(sizeof(int) * row * col); 
   int max_offset = (kernel_size - 1) / 2;
   int tmp_sqsum = 0;
 
@@ -525,7 +524,7 @@ void sqsum_topright_bottomleft(img_t in, img_t *out, int kernel_size)
       tmp_sqsum += in.src[k * in.col + j + max_offset + max_offset  - k] * in.src[k * in.col + j + max_offset + max_offset  - k];
     }
     // assign the first row
-    out->src[0 * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
+    out->src[0 * col + j] = tmp_sqsum;
   }
 
   // last col, (except the first elem, aka topright elem)
@@ -537,19 +536,18 @@ void sqsum_topright_bottomleft(img_t in, img_t *out, int kernel_size)
       tmp_sqsum += in.src[(i + k) * in.col + in.col - 1 - k] * in.src[(i + k) * in.col + in.col - 1 - k];
     }
     // assign the first col
-    out->src[i * col + i] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
+    out->src[i * col + i] = tmp_sqsum;
   }
 
   // others elems
   for (int i = 1; i < row; ++i) {
     for (int j = col - 1; j >= 0; --j) {
       tmp_sqsum = out->src[(i - 1) * col + j + 1]; // assign sqsum to its parent(northeast)
-      static int add = 0;
+      static int add, sub;
       add = in.src[(i + max_offset + max_offset) * in.col + j + max_offset];
-      static int sub = 0;
       sub = in.src[(i + max_offset - max_offset) * in.col + j + max_offset];
       tmp_sqsum = tmp_sqsum - sub * sub + add * add;
-      out->src[i * col + j] = tmp_sqsum < 255? (unsigned char)tmp_sqsum : 255;
+      out->src[i * col + j] = tmp_sqsum;
     }
   }
   puts(">> SqSum -- top_right bottom_left done");
@@ -557,7 +555,7 @@ void sqsum_topright_bottomleft(img_t in, img_t *out, int kernel_size)
 }
 
 
-void four2one(img_t *out, img_t l_r, img_t t_b, img_t lt_br, img_t lr_bl)
+void four2one(img_int_t *out, img_int_t l_r, img_int_t t_b, img_int_t lt_br, img_int_t lr_bl)
 {
   int row = l_r.row;
   int col = l_r.col;
@@ -571,11 +569,11 @@ void four2one(img_t *out, img_t l_r, img_t t_b, img_t lt_br, img_t lr_bl)
 	 "Same num of col.");
   out->row = row;
   out->col = col;
-  out->src = (unsigned char *)malloc(sizeof(unsigned char) * row * col); 
+  out->src = (int *)malloc(sizeof(int) * row * col); 
   
   for (int i = 0; i < row; ++i) {
     for (int j = 0; j < col; ++j) {
-      static unsigned char tmp1, tmp2, tmp3;
+      static int tmp1, tmp2, tmp3;
       tmp1 = l_r.src[i * col + j] < lt_br.src[i * col + j]? l_r.src[i * col + j] : lt_br.src[i * col + j];
       tmp2 = t_b.src[i * col + j] < lr_bl.src[i * col + j]? t_b.src[i * col + j] : lr_bl.src[i * col + j];
       tmp3 = tmp1 < tmp2? tmp1 : tmp2;
@@ -587,7 +585,7 @@ void four2one(img_t *out, img_t l_r, img_t t_b, img_t lt_br, img_t lr_bl)
 }
 
 
-void apply_threshold(img_t in, img_t *out, int threshold)
+void apply_threshold(img_int_t in, img_t *out, int threshold)
 {
   int row = in.row;
   int col = in.col;

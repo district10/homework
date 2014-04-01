@@ -1,0 +1,106 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd" [ ]>
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" width='350px' height='350px' >
+
+  <defs>
+    <rect id='r' width='30' height='30' x= '0' />
+    <rect id='r' width='30' height='30' x='30' />
+    <rect id='r' width='30' height='30' x='60' />
+
+    <style type="text/css">
+      <![CDATA[
+               .background {stroke:black;fill:#ccffcc;stroke-width:2px;opacity:0.5;}
+	       .window     {stroke:black;fill:#8AD0E3;stroke-width:2px;opacity:0.5;}
+	       .center     {stroke:black;fill:#07B9EB;stroke-width:2px;opacity:  1;}
+	       .chosen     {stroke:red;  fill:#8AD0E3;stroke-width:2px;opacity:  1;}
+	       .red        {stroke:black;fill:#ff0000;stroke-width:2px;opacity:0.5;}
+      ]]>
+    </style>
+
+    <g id='bg'>
+      <use xlink:href='#r' x=  '0' class='background'  />
+      <use xlink:href='#r' x= '30' class='background'  />
+      <use xlink:href='#r' x= '60' class='background'  />
+      <use xlink:href='#r' x= '90' class='background'  />
+      <use xlink:href='#r' x='120' class='background'  />
+      <use xlink:href='#r' x='150' class='background'  />
+      <use xlink:href='#r' x='180' class='background'  />
+      <use xlink:href='#r' x='210' class='background'  />
+      <use xlink:href='#r' x='240' class='background'  />
+      <use xlink:href='#r' x='270' class='background'  />
+    </g>
+  </defs>
+
+
+  <!-- Title -->
+  <g transform='translate(140,15)'> 
+    <text width='30' heigth='30' font-weight='900'>M o r a v e c</text>
+  </g>
+
+  <!-- Background -->
+  <g transform='translate(-60,10)'>
+    <!-- Top Legend -->
+    <g transform='translate(95,25)'>
+      <g transform='translate(  0, 0)'> <text width='30' heigth='30'> 1</text> </g>
+      <g transform='translate( 30, 0)'> <text width='30' heigth='30'> 2</text> </g>
+      <g transform='translate( 60, 0)'> <text width='30' heigth='30'> 3</text> </g>
+      <g transform='translate( 90, 0)'> <text width='30' heigth='30'> 4</text> </g>
+      <g transform='translate(120, 0)'> <text width='30' heigth='30'> 5</text> </g>
+      <g transform='translate(150, 0)'> <text width='30' heigth='30'> 6</text> </g>
+      <g transform='translate(180, 0)'> <text width='30' heigth='30'> 7</text> </g>
+      <g transform='translate(210, 0)'> <text width='30' heigth='30'> 8</text> </g>
+      <g transform='translate(240, 0)'> <text width='30' heigth='30'> 9</text> </g>
+      <g transform='translate(270, 0)'> <text width='30' heigth='30'>10</text> </g>
+    </g>
+
+    <!-- Left Legend -->
+    <g transform='translate(70,50)'>
+      <g transform='translate(0,   0)'> <text width='30' heigth='30'> 1</text> </g>
+      <g transform='translate(0,  30)'> <text width='30' heigth='30'> 2</text> </g>
+      <g transform='translate(0,  60)'> <text width='30' heigth='30'> 3</text> </g>
+      <g transform='translate(0,  90)'> <text width='30' heigth='30'> 4</text> </g>
+      <g transform='translate(0, 120)'> <text width='30' heigth='30'> 5</text> </g>
+      <g transform='translate(0, 150)'> <text width='30' heigth='30'> 6</text> </g>
+      <g transform='translate(0, 180)'> <text width='30' heigth='30'> 7</text> </g>
+      <g transform='translate(0, 210)'> <text width='30' heigth='30'> 8</text> </g>
+      <g transform='translate(0, 240)'> <text width='30' heigth='30'> 9</text> </g>
+      <g transform='translate(0, 270)'> <text width='30' heigth='30'>10</text> </g>
+    </g>
+
+    <!-- Cells -->
+    <g transform='translate(90, 30)'>
+      <!-- Background -->
+      <g transform='translate(0, 0)'>
+	<g transform='translate(0,   0)'> <use xlink:href='#bg'/> </g>
+	<g transform='translate(0,  30)'> <use xlink:href='#bg'/> </g>
+	<g transform='translate(0,  60)'> <use xlink:href='#bg'/> </g>
+	<g transform='translate(0,  90)'> <use xlink:href='#bg'/> </g>
+	<g transform='translate(0, 120)'> <use xlink:href='#bg'/> </g>
+	<g transform='translate(0, 150)'> <use xlink:href='#bg'/> </g>
+	<g transform='translate(0, 180)'> <use xlink:href='#bg'/> </g>
+	<g transform='translate(0, 210)'> <use xlink:href='#bg'/> </g>
+	<g transform='translate(0, 240)'> <use xlink:href='#bg'/> </g>
+	<g transform='translate(0, 270)'> <use xlink:href='#bg'/> </g>
+      </g>
+
+      <!-- Other Things -->
+      <g transform='translate(120, 120)'>
+	<!-- Window -->
+	<g transform='translate(0, 0)'>
+	  <rect width='150' height='150' class='window' />
+	</g>
+
+	<!-- Center -->
+	<g transform='translate(60, 60)'>
+	  <rect width='30' height='30' class='center' />
+	</g>
+
+	<!-- chosen -->
+	<g transform='translate(90, 60)'>
+	  <rect width='30' height='30' class='chosen' />
+	</g>
+      </g>
+    </g>
+  </g>
+</svg>

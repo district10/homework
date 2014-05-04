@@ -19,6 +19,6 @@
 
 
 
-[pandoc]: pandoc official site
-[arcgis-report-jianshu]: jianshu post
-[gnat]: my github blog
+[pandoc]: http://johnmacfarlane.net/pandoc/
+[arcgis-report-jianshu]: http://jianshu.io/p/2eb40e09f481
+[gnat]: https://district10.github.io/about/

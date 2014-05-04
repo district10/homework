@@ -1,14 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+</head>
+<body>
 <h1 id="空间分析实习---实习报告">空间分析实习 - 实习报告</h1>
-<p>by <a href="shit">Gnat</a></p>
+<p>by <a href="https://district10.github.io/about/">Gnat</a></p>
 <hr />
 <h2 id="实习目的">实习目的</h2>
 <ul>
-<li>本次实习的用 <a href="official%20website">ArcGIS</a> 完成空间分析的一些操作，</li>
+<li>本次实习的用 <a href="http://en.wikipedia.org/wiki/ArcGIS" title="其实 ArcGIS 不值那么多">ArcGIS</a> 完成空间分析的一些操作，</li>
 <li>加深对空间分析理论的理解和认识，</li>
 <li>熟悉 GIS 领域最通用最强大的软件 ArcGIS 的使用。</li>
 </ul>
 <div class="figure">
-<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/aa_arcgis_logo.png" alt="arcgis-logo" /><p class="caption">arcgis-logo</p>
+<img src="ScreenShots/aa_arcgis_logo.png" /><p class="caption"></p>
 </div>
 <hr />
 <h2 id="实习过程">实习过程</h2>
@@ -20,27 +29,27 @@
 </ol>
 <h3 id="一点说明">一点说明</h3>
 <ol style="list-style-type: decimal">
-<li><p>之前看过一点 <a href="python%20website">Python</a>，用过一点 GDAL，写过一点<a href="my%20notes">笔记: Geoprocessing with Python</a>，加上手上又有一本挺好的 <a href="douban%20that%20book">ArcPy 书籍</a>，所以决定用 Python 来做这次实习，结果是实习没做完。。。</p></li>
-<li><p>作为重度拖延症患者，我难以保证这学期作业能这个学期做完，所以我把本次实习的完成部分放在 <a href="this%20repo">我的 Github</a>，以后有机会慢慢把这次实习做完。（戳<a href="my%20late%20work">拖延症患者的历史</a>）</p></li>
-<li><p><a href="what%20you%20see%20is%20what%20you%20get">WYSIWYG(所见即所得)</a> 的写报告工具如 MS Office 的 Word，或者开源的 LibreOffice 实在很不友好，而且不能做到 <a href="yihui&#39;s%20website">yihui</a> 所提倡的 <a href="his%20report">Reproductive Research</a>，所以本实习报告用 Markdown 写成，在 Github 里有一份，在我的<a href="my%20jianshuo%20blog%20to%20this%20report">博客（简书）</a>上也有一份，方便分享和传播，也方便日后整理。</p></li>
+<li><p>之前看过一点 <a href="https://www.python.org/">Python</a>，用过一点 GDAL，写过一点<a href="http://jianshu.io/p/a710e7656ddb">笔记: Geoprocessing with Python</a>，加上手上又有一本挺好的 <a href="http://book.douban.com/subject/22165817/">ArcPy 书籍</a>，所以决定用 Python 来做这次实习，结果是实习没做完。。。</p></li>
+<li><p>作为重度拖延症患者，我难以保证这学期作业能这个学期做完，所以我把本次实习的完成部分放在 <a href="https://github.com/district10/homework/tree/master/2014/Spatial-Analysis/ArcGIS">我的 Github</a>，以后有机会慢慢把这次实习做完。（戳<a href="https://github.com/district10/Pattern_Classification">拖延症患者的历史</a>）</p></li>
+<li><p><a href="http://en.wikipedia.org/wiki/Wysiwyg">WYSIWYG(所见即所得)</a> 的写报告工具如 MS Office 的 Word，或者开源的 LibreOffice 实在很不友好，而且不能做到 <a href="http://yihui.name/" title="R 大神">yihui</a> 所提倡的 <a href="http://biostat.mc.vanderbilt.edu/wiki/pub/Main/UseR-2012/InvitedXieAllaire.pdf" title="PDF">Reproducible Research</a>，所以本实习报告用 Markdown 写成，在 Github 里有一份，在我的<a href="http://jianshu.io/p/2eb40e09f481">博客（简书）</a>上也有一份，方便分享和传播，也方便日后整理。</p></li>
 <li><p>调用 ArcGIS 的 ArcPy 之前的准备工作</p>
 <ul>
 <li><strong>解压数据</strong></li>
 </ul>
 <div class="figure">
-<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/ab_extract.png" alt="extract-data" /><p class="caption">extract-data</p>
+<img src="ScreenShots/ab_extract.png" /><p class="caption"></p>
 </div>
 <ul>
 <li><strong>打开地图</strong></li>
 </ul>
 <div class="figure">
-<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/ac_load_mxd.png" alt="load-mxd" /><p class="caption">load-mxd</p>
+<img src="ScreenShots/ac_load_mxd.png" /><p class="caption"></p>
 </div>
 <ul>
 <li><strong>打开 Python Shell</strong></li>
 </ul>
 <div class="figure">
-<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/ad_python_shell.png" alt="load-python-shell" /><p class="caption">load-python-shell</p>
+<img src="ScreenShots/ad_python_shell.png" /><p class="caption"></p>
 </div>
 <ul>
 <li><p><strong>然后就是把相应代码粘贴到 Python Shell 中执行（回车即可）</strong></p></li>
@@ -136,7 +145,7 @@ mxd.relativePaths = True;</code></pre>
 </ol>
 <p><code>arcpy.CheckOutExtension(&quot;Spatial&quot;);</code> * 如果你没打开的话，大概会看到个这个</p>
 <div class="figure">
-<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/zz_shit.png" alt="spatial-extension-error" /><p class="caption">spatial-extension-error</p>
+<img src="ScreenShots/zz_shit.png" alt="spatial-extension-error" /><p class="caption">spatial-extension-error</p>
 </div>
 <ol start="9" style="list-style-type: decimal">
 <li><p>开始处理</p>
@@ -187,7 +196,7 @@ ReclassSch.save(path_gdb + &#39;ReclassSch&#39;);</code></pre>
 <ol start="10" style="list-style-type: decimal">
 <li>处理结果截图</li>
 </ol>
-<p><img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/af_paste_and_execute2.png" alt="paste-and-execute" /> <img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/ag_processing_msg.png" alt="output-msg" /> <img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/ah_processing_msg2.png" alt="output-msg2" /> <img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/ai_processing_done.png" alt="output-done" /> <img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/aj_processing_result.png" alt="output-map" /></p>
+<p><img src="ScreenShots/af_paste_and_execute2.png" /> <img src="ScreenShots/ag_processing_msg.png" /> <img src="ScreenShots/ah_processing_msg2.png" /> <img src="ScreenShots/ai_processing_done.png" /> <img src="ScreenShots/aj_processing_result.png" /></p>
 <h4 id="矢量部分">矢量部分</h4>
 <h5 id="demo2-test1">DEMO2, test1</h5>
 <ol style="list-style-type: decimal">
@@ -235,7 +244,7 @@ key-val= [(row[0], row[1]) for row in arcpy.da.SearchCursor(&quot;Zoning&quot;, 
 <li>输出</li>
 </ol>
 <div class="figure">
-<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/bb_printout.png" alt="demo2-test1" /><p class="caption">demo2-test1</p>
+<img src="ScreenShots/bb_printout.png" /><p class="caption"></p>
 </div>
 <h5 id="dome2-other-tests">DOME2, other tests</h5>
 <ol style="list-style-type: decimal">
@@ -256,7 +265,7 @@ percap= [row[0] for row in arcpy.da.SearchCursor(&quot;Centract&quot;, (&quot;PE
 print percap # ===&gt; [19867.69921875, 12793.2998046875, 17364.80078125]</code></pre>
 <pre><code>* 输出效果</code></pre>
 <div class="figure">
-<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/bd_done.png" alt="demo2-test2" /><p class="caption">demo2-test2</p>
+<img src="ScreenShots/bd_done.png" /><p class="caption"></p>
 </div>
 <ol start="3" style="list-style-type: decimal">
 <li><p>缓冲区操作，最后导出到 shp 文件</p>
@@ -273,7 +282,7 @@ arcpy.MakeFeatureLayer_management(&quot;parcels&quot;, &quot;parcels_out&quot;) 
 
 * 有时候 ArcGIS 会无故卡死，不知道什么情况</code></pre>
 <div class="figure">
-<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/bf_error_occurred.png" alt="arcgis-died" /><p class="caption">arcgis-died</p>
+<img src="ScreenShots/bf_error_occurred.png" alt="arcgis-died" /><p class="caption">arcgis-died</p>
 </div>
 <ol start="4" style="list-style-type: decimal">
 <li><p>缓冲区操作，并合并</p>
@@ -292,19 +301,22 @@ arcpy.analysis.Union((&quot;Water_BUFFER&quot;, &quot;Roads_BUFFER&quot;), &quot
 <li><p>手工做了一点其他的内容，实在太烂，不敢多发</p></li>
 </ol>
 <div class="figure">
-<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/fb_holly_shit.png" alt="holly-shit" /><p class="caption">holly-shit</p>
+<img src="ScreenShots/fb_holly_shit.png" /><p class="caption"></p>
 </div>
 <h2 id="实习感悟">实习感悟</h2>
 <ol style="list-style-type: decimal">
 <li><p>通过实习，巩固了 ArcGIS 的使用，巩固了 Python 编程；</p></li>
 <li><p>锻炼了查资料，查文档的能力，英文搜索投放关键字的水平也大大提高了；</p></li>
-<li><p>熟悉了 Windows 下 notepad++ 的使用， Linux 下 <a href="shit">Bash</a> 脚本处理文档的小技巧；</p></li>
-<li><p><a href="" title="靠，ArcGIS 这么无聊，我五一都被你毁了，你当我傻啊">这是一个快乐而充实的五一国际劳动节；</a></p></li>
+<li><p>熟悉了 Windows 下 <a href="http://notepad-plus-plus.org/" title="Win 上最好用的之一，如果没有Vim 和 Emacs的话">notepad++</a> 的使用， Linux 下 <a href="http://jianshu.io/p/87eefaf092c5" title="从小养成 SEO 的好习惯~">Bash</a> 脚本处理文档的小技巧；</p></li>
+<li><p><a href="http://www.douban.com/group/topic/5212341/?start=213" title="靠，ArcGIS 这么无聊，我五一都被你毁了，你当我傻啊">这是一个快乐而充实的五一国际劳动节；</a></p></li>
 <li><p>还是 Linux 好用，写报告多方便多了，see:</p>
 <ul>
-<li><a href="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/linux_1.png">撰写</a></li>
-<li><a href="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/linux_2.png">编译</a></li>
-<li><a href="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/linux_3.png">查看</a></li>
-<li><a href="my%20jianshuo%20blog%20to%20this%20report">还可以随意导出分享, e.g. 本报告的简书备份</a></li>
+<li><a href="ScreenShots/linux_1.png">撰写</a></li>
+<li><a href="ScreenShots/linux_2.png">编译</a></li>
+<li><a href="ScreenShots/linux_3.png">查看</a></li>
+<li><a href="http://jianshu.io/p/2eb40e09f481">还可以随意导出分享, e.g. 本报告的简书备份</a></li>
+<li><a href="ScreenShots/vim.png">Vim is Fantastic！</a></li>
 </ul></li>
 </ol>
+</body>
+</html>

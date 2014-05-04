@@ -1,0 +1,310 @@
+<h1 id="空间分析实习---实习报告">空间分析实习 - 实习报告</h1>
+<p>by <a href="shit">Gnat</a></p>
+<hr />
+<h2 id="实习目的">实习目的</h2>
+<ul>
+<li>本次实习的用 <a href="official%20website">ArcGIS</a> 完成空间分析的一些操作，</li>
+<li>加深对空间分析理论的理解和认识，</li>
+<li>熟悉 GIS 领域最通用最强大的软件 ArcGIS 的使用。</li>
+</ul>
+<div class="figure">
+<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/aa_arcgis_logo.png" alt="arcgis-logo" /><p class="caption">arcgis-logo</p>
+</div>
+<hr />
+<h2 id="实习过程">实习过程</h2>
+<h3 id="过程综述">过程综述</h3>
+<ol style="list-style-type: decimal">
+<li><p>实习按照实习指导书进行，分为栅格、矢量、三维等几大版块；</p></li>
+<li><p>按照实习指导书要求，回答相应问题，并提交几份地图；</p></li>
+<li><p>最后按要求撰写实习报告。</p></li>
+</ol>
+<h3 id="一点说明">一点说明</h3>
+<ol style="list-style-type: decimal">
+<li><p>之前看过一点 <a href="python%20website">Python</a>，用过一点 GDAL，写过一点<a href="my%20notes">笔记: Geoprocessing with Python</a>，加上手上又有一本挺好的 <a href="douban%20that%20book">ArcPy 书籍</a>，所以决定用 Python 来做这次实习，结果是实习没做完。。。</p></li>
+<li><p>作为重度拖延症患者，我难以保证这学期作业能这个学期做完，所以我把本次实习的完成部分放在 <a href="this%20repo">我的 Github</a>，以后有机会慢慢把这次实习做完。（戳<a href="my%20late%20work">拖延症患者的历史</a>）</p></li>
+<li><p><a href="what%20you%20see%20is%20what%20you%20get">WYSIWYG(所见即所得)</a> 的写报告工具如 MS Office 的 Word，或者开源的 LibreOffice 实在很不友好，而且不能做到 <a href="yihui&#39;s%20website">yihui</a> 所提倡的 <a href="his%20report">Reproductive Research</a>，所以本实习报告用 Markdown 写成，在 Github 里有一份，在我的<a href="my%20jianshuo%20blog%20to%20this%20report">博客（简书）</a>上也有一份，方便分享和传播，也方便日后整理。</p></li>
+<li><p>调用 ArcGIS 的 ArcPy 之前的准备工作</p>
+<ul>
+<li><strong>解压数据</strong></li>
+</ul>
+<div class="figure">
+<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/ab_extract.png" alt="extract-data" /><p class="caption">extract-data</p>
+</div>
+<ul>
+<li><strong>打开地图</strong></li>
+</ul>
+<div class="figure">
+<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/ac_load_mxd.png" alt="load-mxd" /><p class="caption">load-mxd</p>
+</div>
+<ul>
+<li><strong>打开 Python Shell</strong></li>
+</ul>
+<div class="figure">
+<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/ad_python_shell.png" alt="load-python-shell" /><p class="caption">load-python-shell</p>
+</div>
+<ul>
+<li><p><strong>然后就是把相应代码粘贴到 Python Shell 中执行（回车即可）</strong></p></li>
+<li><p><strong>代码放在各 DEMO 文件夹的 x-py 文件夹内</strong>，有些我试验的 Python 脚本放在 more-scripts 文件夹</p></li>
+</ul></li>
+</ol>
+<h3 id="栅格部分一个完整的例子-demo">栅格部分(一个完整的例子, DEMO)</h3>
+<ol style="list-style-type: decimal">
+<li><p>设置工作路径，加入必要的 Python Module</p>
+<ul>
+<li>代码</li>
+</ul></li>
+</ol>
+<pre><code>path_base = &#39;X://DEMO/&#39;;
+path_gdb = path_base + &#39;demo.gdb/&#39;;
+path_data = path_base + &#39;Spatial/&#39;;
+
+# import modules
+import sys, os, arcpy;
+import arcpy.mapping as mapping;
+from arcpy.sa import *
+from arcpy.mapping import *</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li><p>设置工作区</p>
+<ul>
+<li>代码</li>
+</ul></li>
+</ol>
+<pre><code># set workspace 
+arcpy.env.workspace = path_gdb;</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li><p>指定数据来源</p>
+<ul>
+<li>代码</li>
+</ul></li>
+</ol>
+<pre><code># source data
+path_elevation = path_data + &#39;elevation&#39;
+path_landuse = path_data + &#39;landuse&#39;
+path_school_site = path_data + &#39;School_site.shp&#39;
+path_destination = path_data +  &#39;Stowe.gdb/destination&#39;
+path_rec_sites = path_data + &#39;Stowe.gdb/rec_sites&#39;
+path_roads = path_data + &#39;Stowe.gdb/roads&#39;
+path_schools = path_data + &#39;Stowe.gdb/schools&#39;</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li><p>获取当前地图的第一个 dataFrame，以添加数据</p>
+<ul>
+<li>代码</li>
+</ul></li>
+</ol>
+<pre><code># get document
+mxd = mapping.MapDocument(&quot;CURRENT&quot;);
+df = mapping.ListDataFrames(mxd)[0]; # Get First Data frame, a.k.a. &quot;Layers&quot; (empty by far)</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li><p>添加数据</p>
+<ul>
+<li>代码</li>
+</ul></li>
+</ol>
+<pre><code># Add Layers
+layer = mapping.Layer(path_elevation);
+mapping.AddLayer(df, layer, &quot;AUTO_ARRANGE&quot;)
+layer = mapping.Layer(path_landuse);
+mapping.AddLayer(df, layer, &quot;AUTO_ARRANGE&quot;)
+layer = mapping.Layer(path_school_site);
+mapping.AddLayer(df, layer, &quot;AUTO_ARRANGE&quot;)
+layer = mapping.Layer(path_destination);
+mapping.AddLayer(df, layer, &quot;AUTO_ARRANGE&quot;)
+layer = mapping.Layer(path_rec_sites);
+mapping.AddLayer(df, layer, &quot;AUTO_ARRANGE&quot;)
+layer = mapping.Layer(path_roads);
+mapping.AddLayer(df, layer, &quot;AUTO_ARRANGE&quot;)
+layer = mapping.Layer(path_schools);
+mapping.AddLayer(df, layer, &quot;AUTO_ARRANGE&quot;)
+# Adding Layers Done, Fantastic~</code></pre>
+<ol start="6" style="list-style-type: decimal">
+<li>设置数据的路径为相对路径便于分享拷贝后使用</li>
+</ol>
+<pre><code># set relative path
+mxd.relativePaths = True;</code></pre>
+<ol start="7" style="list-style-type: decimal">
+<li>设置处理的边界（包围盒？），这样处理就是对全图，而不是局部，便于</li>
+</ol>
+<pre><code>for df in mapping.ListDataFrames(mxd):
+    if (df.name == &#39;Layers&#39;): # that&#39;s for sure
+        layers = mapping.ListLayers(mxd, &#39;elevation&#39;, df);
+        arcpy.env.extent = layers[0].getExtent(); # set extent to whole map, that&#39;s what we want</code></pre>
+<ol start="8" style="list-style-type: decimal">
+<li><p>确定下，你的空间分析组件有没有打上勾</p>
+<ul>
+<li>代码</li>
+</ul></li>
+</ol>
+<p><code>arcpy.CheckOutExtension(&quot;Spatial&quot;);</code> * 如果你没打开的话，大概会看到个这个</p>
+<div class="figure">
+<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/zz_shit.png" alt="spatial-extension-error" /><p class="caption">spatial-extension-error</p>
+</div>
+<ol start="9" style="list-style-type: decimal">
+<li><p>开始处理</p>
+<ul>
+<li>根据地形生成阴影、坡度栅格图，根据欧式距离生成 DisTanceRec 和 DistanceSch 图</li>
+</ul></li>
+</ol>
+<pre><code># Execute HillShade
+outHillShade = arcpy.sa.Hillshade(&quot;elevation&quot;, 180, 75, &quot;SHADOWS&quot;, 1); # done
+outHillShade.save(path_gdb + &#39;HillShade&#39;);
+
+# fine
+Slope = arcpy.sa.Slope(&quot;elevation&quot;, &quot;DEGREE&quot;);
+Slope.save(path_gdb + &#39;Slope&#39;);
+
+# Distance to Rec Site
+DistanceRec = arcpy.sa.EucDistance(&quot;rec_sites&quot;, cell_size = 30);
+DistanceRec.save(path_gdb + &#39;DistanceRec&#39;);
+
+# Distance to School
+DistanceSch = arcpy.sa.EucDistance(&quot;schools&quot;, cell_size = 30);
+DistanceSch.save(path_gdb + &#39;DistanceSch&#39;);</code></pre>
+<pre><code>* 降低距离的分类，重分类</code></pre>
+<pre><code># this is it, Reclassify
+ReclassSlope = arcpy.sa.Reclassify(&quot;Slope&quot;, &quot;Value&quot;,
+                        RemapRange([[0,8,1],[8,15,2],[15,23,3],[23,31,4],[31,39,5],
+                                    [39,46,6],[46,54,7],[54,62,8],[62,69,9],[69,78,10]]), &quot;NODATA&quot;); # this is what we want~
+ReclassSlope.save(path_gdb + &#39;ReclassSlope&#39;);
+                                    
+ReclassRec = arcpy.sa.Reclassify(&quot;DistanceRec&quot;, &quot;Value&quot;,
+                        RemapRange([[0,1349,1],[1349,2698,2],[2698,4046,3],[4046,5395,4],[5395,6744,5],
+                                    [6744,8093,6],[8093,9441,7],[12139,13488,8],[10790,12139,9],[12139,13488,10]]), &quot;NODATA&quot;); # good~
+ReclassRec.save(path_gdb + &#39;ReclassRec&#39;);</code></pre>
+<pre><code>* 手工太累，用一个函数生成重分类的 RemapRange 矩阵，再重分类</code></pre>
+<pre><code># seem we need a function to help us out
+def partition (beg, end, num):
+    pace = ( end - beg ) / num + 1;
+    return [[beg+pace*i, beg+pace*i+pace] for i in xrange(num)] # shit, I used &#39;from&#39; once... terrible mistake
+
+range = partition (0, 16928, 10);
+ReclassSch = arcpy.sa.Reclassify(&quot;DistanceSch&quot;, &quot;Value&quot;,
+                        RemapRange(range), &quot;NODATA&quot;);
+ReclassSch.save(path_gdb + &#39;ReclassSch&#39;);</code></pre>
+<pre><code>* 按照实习指导书的要求，输出</code></pre>
+<pre><code>with arcpy.da.SearchCursor(&quot;landuse&quot;, (&quot;LANDUSE&quot;)) as cursor:
+    for row in sorted(cursor):
+        print row[0]</code></pre>
+<ol start="10" style="list-style-type: decimal">
+<li>处理结果截图</li>
+</ol>
+<p><img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/af_paste_and_execute2.png" alt="paste-and-execute" /> <img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/ag_processing_msg.png" alt="output-msg" /> <img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/ah_processing_msg2.png" alt="output-msg2" /> <img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/ai_processing_done.png" alt="output-done" /> <img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/aj_processing_result.png" alt="output-map" /></p>
+<h4 id="矢量部分">矢量部分</h4>
+<h5 id="demo2-test1">DEMO2, test1</h5>
+<ol style="list-style-type: decimal">
+<li><p>打开 mxd 空地图文件，用相应脚本加载数据</p></li>
+<li><p>通过属性选定数据，用 Arcpy 中的 SelectLayerByAttribute_management。</p>
+<ul>
+<li>代码</li>
+</ul></li>
+</ol>
+<pre><code>arcpy.SelectLayerByAttribute_management(&quot;Streets&quot;, &quot;NEW_SELECTION&quot;, &#39;&quot;STR&quot; = \&#39;I40\&#39;&#39;); # 靠，看成了140 。。。</code></pre>
+<pre><code>* 注： ArcPy 里同一个函数有两种调用方法，一种是这里的方式：功能（SelectLayerByAttribute）+ 分类（management）；另一种是按照 ArcToolBox 的结构分层次，如 `arcpy.sa.Slope()`，其中 sa 指 Spatial Analysis，是相应 ArcToolBox 的别名（alias），可以通过右键相应 ToolBox 查看。后一种的层次性和条理性更清晰，但前一种，更直接得面向功能，即你想干什么。根据具体情况，选择适合的方式。</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li><p>选定数据，统计数量，按照指导书要求回答问题</p>
+<ul>
+<li>代码</li>
+</ul></li>
+</ol>
+<pre><code>arcpy.SelectLayerByLocation_management(&quot;Stations&quot;, &quot;WITHIN_A_DISTANCE&quot;, &quot;Streets&quot;, &quot;1000 Feet&quot;, &quot;NEW_SELECTION&quot;);
+count = arcpy.GetCount_management(&quot;Stations&quot;);
+# Ques: How many sites, and their name?
+# Ans: 
+print &#39;There are &#39; + str(count) + &#39; Stations are ... within 140 feets from 140 road&#39;; # ===&gt; 2, ...
+with arcpy.da.SearchCursor(&quot;Stations&quot;, (&quot;NAME&quot;)) as cursor:
+    for row in sorted(cursor):
+        print row[0] # have a better looking than `print row&#39;</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li><p>一些别的处理</p>
+<ul>
+<li>代码</li>
+</ul></li>
+</ol>
+<pre><code>arcpy.SelectLayerByLocation_management(&quot;Business&quot;, &quot;WITHIN_A_DISTANCE&quot;, &quot;Stations&quot;, &quot;1320 Feet&quot;, &quot;NEW_SELECTION&quot;);
+count = arcpy.GetCount_management( &quot;Business&quot;); # ==&gt; 19
+print &quot;有 &quot; + str(count) + &quot; 个商业站点位于已选中的加油站 1320 英尺以内&quot;
+arcpy.SelectLayerByAttribute_management(&quot;Zoning&quot;, &quot;NEW_SELECTION&quot;, &#39;&quot;DESCRIPTIO&quot; = \&#39;DRAIN\&#39;&#39;);
+arcpy.SelectLayerByLocation_management(&quot;Zoning&quot;, &quot;BOUNDARY_TOUCHES&quot;, &quot;Zoning&quot;); # ==&gt; 37
+juris= [row[0] for row in arcpy.da.SearchCursor(&quot;Zoning&quot;, (&quot;JURISDICTI&quot;))];
+JURIS=set(juris);
+# &gt;&gt;&gt; print JURIS
+# set([u&#39;COUNTY&#39;, u&#39;CITY&#39;])
+acres= [row[0] for row in arcpy.da.SearchCursor(&quot;Zoning&quot;, (&quot;ACRES&quot;))];
+key-val= [(row[0], row[1]) for row in arcpy.da.SearchCursor(&quot;Zoning&quot;, (&quot;JURISDICTI&quot;, &quot;ACRES&quot;))]
+# how to use dict?</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>输出</li>
+</ol>
+<div class="figure">
+<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/bb_printout.png" alt="demo2-test1" /><p class="caption">demo2-test1</p>
+</div>
+<h5 id="dome2-other-tests">DOME2, other tests</h5>
+<ol style="list-style-type: decimal">
+<li><p>其他的几个处理都大同小异，这里只看关键的几个代码</p></li>
+<li><p>根据属性（非空间的）和位置（空间的）来选择 Feature（表中的行，数据项）</p>
+<ul>
+<li>代码</li>
+</ul></li>
+</ol>
+<pre><code>arcpy.SelectLayerByAttribute_management(&quot;Centract&quot;, &quot;NEW_SELECTION&quot;, &#39;&quot;POP_90&quot; &lt; 5786.054054&#39;);
+# arcpy.SelectLayerByLocation_management(&quot;Centract&quot;, &quot;COMPLETELY_CONTAINS&quot;, &quot;MidSchol&quot;);
+arcpy.SelectLayerByLocation_management(&quot;Centract&quot;, &quot;COMPLETELY_CONTAINS&quot;, &quot;MidSchol&quot;, selection_type=&quot;SUBSET_SELECTION&quot;);
+arcpy.SelectLayerByAttribute_management(&quot;Counties&quot;, &quot;NEW_SELECTION&quot;, &#39;&quot;Name&quot; = \&#39;Cobb County\&#39;&#39;);
+arcpy.SelectLayerByLocation_management(&quot;Centract&quot;, &quot;COMPLETELY_WITHIN&quot;, &quot;Counties&quot;, selection_type=&quot;SUBSET_SELECTION&quot;);
+count = arcpy.GetCount_management( &quot;Centract&quot;);
+print count
+percap= [row[0] for row in arcpy.da.SearchCursor(&quot;Centract&quot;, (&quot;PER_CAPINC&quot;))];
+print percap # ===&gt; [19867.69921875, 12793.2998046875, 17364.80078125]</code></pre>
+<pre><code>* 输出效果</code></pre>
+<div class="figure">
+<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/bd_done.png" alt="demo2-test2" /><p class="caption">demo2-test2</p>
+</div>
+<ol start="3" style="list-style-type: decimal">
+<li><p>缓冲区操作，最后导出到 shp 文件</p>
+<ul>
+<li>代码</li>
+</ul></li>
+</ol>
+<pre><code># arcpy.analysis.Buffer(&quot;vernal_pools&quot;, &quot;vernal_pools_Buffer.shp&quot;, &quot;2000 Feets&quot;, &quot;FULL&quot;, &quot;ROUND&quot;, &quot;ALL&quot;);
+# Not Feets, it&#39;s Feet
+arcpy.analysis.Buffer(&quot;vernal_pools&quot;, &quot;vernal_pools_Buffer.shp&quot;, &quot;2000 Feet&quot;, &quot;FULL&quot;, &quot;ROUND&quot;, &quot;ALL&quot;);
+arcpy.SelectLayerByLocation_management(&quot;parcels&quot;, &quot;INTERSECT&quot;, &quot;vernal_pools_Buffer&quot;);
+arcpy.MakeFeatureLayer_management(&quot;parcels&quot;, &quot;parcels_out&quot;) # 靠，直接导出，就是导出 selected features，查了我半天</code></pre>
+<pre><code>* 需要注意的是 `2000 Feet` 不能写成 `2000 Feets`。
+
+* 有时候 ArcGIS 会无故卡死，不知道什么情况</code></pre>
+<div class="figure">
+<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/bf_error_occurred.png" alt="arcgis-died" /><p class="caption">arcgis-died</p>
+</div>
+<ol start="4" style="list-style-type: decimal">
+<li><p>缓冲区操作，并合并</p>
+<ul>
+<li>代码</li>
+</ul></li>
+</ol>
+<pre><code># Processing
+arcpy.analysis.Buffer(&quot;Roads&quot;, &quot;Roads_BUFFER&quot;, &quot;500 Meter&quot;, &quot;FULL&quot;, &quot;ROUND&quot;, &quot;ALL&quot;);
+arcpy.analysis.Buffer(&quot;Water&quot;, &quot;Water_BUFFER&quot;, &quot;500 Meter&quot;, &quot;FULL&quot;, &quot;ROUND&quot;, &quot;ALL&quot;);
+arcpy.analysis.Union((&quot;Water_BUFFER&quot;, &quot;Roads_BUFFER&quot;), &quot;water_road&quot;, &quot;ALL&quot;, gaps=&quot;GAPS&quot;)</code></pre>
+<h5 id="其他">其他</h5>
+<ol style="list-style-type: decimal">
+<li><p>其他的部分用 ArcPy 没法搞定，首先就是无法打开网络分析的 &quot;Streets_ND&quot; 数据，从我查到的资料表明 ArcPy 做不了。</p></li>
+<li><p>可能是我的 ArcGIS 权限不够的问题，我没法新建 ToolBox。</p></li>
+<li><p>手工做了一点其他的内容，实在太烂，不敢多发</p></li>
+</ol>
+<div class="figure">
+<img src="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/fb_holly_shit.png" alt="holly-shit" /><p class="caption">holly-shit</p>
+</div>
+<h2 id="实习感悟">实习感悟</h2>
+<ol style="list-style-type: decimal">
+<li><p>通过实习，巩固了 ArcGIS 的使用，巩固了 Python 编程；</p></li>
+<li><p>锻炼了查资料，查文档的能力，英文搜索投放关键字的水平也大大提高了；</p></li>
+<li><p>熟悉了 Windows 下 notepad++ 的使用， Linux 下 <a href="shit">Bash</a> 脚本处理文档的小技巧；</p></li>
+<li><p><a href="" title="靠，ArcGIS 这么无聊，我五一都被你毁了，你当我傻啊">这是一个快乐而充实的五一国际劳动节；</a></p></li>
+<li><p>还是 Linux 好用，写报告多方便多了，see:</p>
+<ul>
+<li><a href="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/linux_1.png">撰写</a></li>
+<li><a href="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/linux_2.png">编译</a></li>
+<li><a href="/root/Desktop/homework/2014/Spatial-Analysis/ArcGIS/ScreenShots/linux_3.png">查看</a></li>
+<li><a href="my%20jianshuo%20blog%20to%20this%20report">还可以随意导出分享, e.g. 本报告的简书备份</a></li>
+</ul></li>
+</ol>

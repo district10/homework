@@ -8,11 +8,14 @@
     
     * 用脚本把报告了的链接改下就可以了，大概是这样(现在没网，图都没传）：
 ```
-qiniu_prefix="qiniu"
+qiniu_prefix="http://gnat-tang-shared-image.qiniudn.com/ScreenShots"
 for i in *.png;
 do
 	echo ${qiniu_prefix}/$i
 done
 ```
 
-    * 或者直接在 Emacs 里弄 `s/ScreenShots\/*.png/ooe.png/g` (evil-mode)
+    * 或者直接在 Vim (or Emacs evil-mode) 里弄 `s/ScreenShots/http:\/\/gnat-tang-shared-image.qiniudn.com\/ScreenShots/g`
+    ![][vim]
+    
+[vim]: vim.png   

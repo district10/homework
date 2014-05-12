@@ -9,3 +9,4 @@ D3 DEMO
 
 * Gen Json File from Shape File
     *  `ogr2ogr -f "GeoJSON" MidSchol.json Midschol.shp` 
+* My Github: https://github.com/district10 

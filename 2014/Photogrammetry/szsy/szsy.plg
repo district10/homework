@@ -1,0 +1,31 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: szsy - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\song\AppData\Local\Temp\RSP4A62.tmp" with contents
+[
+/nologo /subsystem:windows /incremental:yes /pdb:"Debug/szsy.pdb" /debug /machine:I386 /out:"Debug/szsy.exe" /pdbtype:sept 
+.\Debug\Forstner.obj
+.\Debug\MainFrm.obj
+.\Debug\Moravec.obj
+.\Debug\StdAfx.obj
+.\Debug\szsy.obj
+.\Debug\szsyDoc.obj
+.\Debug\szsyView.obj
+.\Debug\szsy.res
+]
+Creating command line "link.exe @C:\Users\song\AppData\Local\Temp\RSP4A62.tmp"
+<h3>Output Window</h3>
+Linking...
+
+
+
+<h3>Results</h3>
+szsy.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

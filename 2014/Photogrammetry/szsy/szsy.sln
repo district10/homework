@@ -1,0 +1,10 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{059D6162-CD51-11D0-AE1F-00A0C90FFFC3}") = "szsy", "szsy.dsp", "{C7A7CD18-59E1-4661-B52F-9BF8E928EDED}"
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,3 +1,7 @@
+/* Compile: `gcc server.c -o server`
+ * Run: `./server`
+ */   
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -56,7 +60,7 @@ int main(int argc, char *argv[])
     puts("[] Ok, it's listenning now~");
 
 
-/* LISTEN, Repeate in a for loop */
+    /* LISTEN, Repeate in a for loop */
     for (;;) {
 
       /* Accept new connection */
@@ -65,8 +69,7 @@ int main(int argc, char *argv[])
         return 1;
       } 
       puts("[] New connection in~");
-
-/* Communicate */
+      /* Communicate */
       /* Receive message from client */
       if ((recv_size = recv(client_sock, recvBuff, sizeof(recvBuff), 0)) < 0) {
         puts("recv() failed\n");

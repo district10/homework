@@ -1,3 +1,7 @@
+/* Compile: `gcc client.c -o client` 
+ * Run: `./client` or `./client <ip>` 
+ */
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -14,7 +18,7 @@ int main(int argc, char *argv[])
   const int CONN_PORT = 5600;
   const int MAX_BUFFSIZE = 1024; 
 
-  int client_sock = 0, n = 0;
+  int client_sock = 0;
   char recvBuff[MAX_BUFFSIZE];
   char sendBuff[MAX_BUFFSIZE];
   int recv_size = 0;
@@ -76,6 +80,7 @@ int main(int argc, char *argv[])
       close(client_sock);
       return 0;
     }
+    puts("waiting for reply...");
     /* puts("[Msg Sent To Server, Waiting For Reply Now...]"); */
 
     /* Receive message from client */
@@ -85,7 +90,7 @@ int main(int argc, char *argv[])
     }
 
     /* printf("[Got Msg From Client...]\n>> %s", recvBuff); */
-    printf(">> %s", recvBuff);
+    printf(">> %s\n", recvBuff);
   } // end of for loop
 
 

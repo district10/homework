@@ -1,3 +1,7 @@
+/* Compile: `gcc client.c -o client`
+ * Run: `./client`
+ */
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>

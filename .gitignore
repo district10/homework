@@ -1,5 +1,6 @@
 *~
 *#
+*.bin
 *.out
 2014/Photogrammetry/*.raw
 build*Desktop_Qt_5_2_0_GCC_64-bit-Debug/

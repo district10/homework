@@ -74,22 +74,19 @@ int main(int argc, char *argv[])
 
       /* Send received string and receive again until end of transmission */
       // if (send(client_sock, recvBuff, strlen(recvBuff), 0) != strlen(recvBuff)) {/* Message Here */}
-      puts("[Got Messsage From Client...]");
+
+      /* puts("[Got Messsage From Client...]"); */
       printf(">> %s\n", recvBuff);
-      
-      puts("[] What You want to say to client?..."); 
+      /* puts("[] What You want to say to client?..."); */
       printf("<< ");
       scanf("%[^\n]",sendBuff);
 
       /* Send the string to the client */
-      if (send(client_sock, sendBuff, strlen(sendBuff), 0) != strlen(sendBuff)) {
+      if (send(client_sock, sendBuff, sizeof(sendBuff), 0) != sizeof(sendBuff)) {
         puts("send() failed\n");
         return 1;
       }
-      puts("[Msg Sent to Client, waiting for reply now]");
-      
+      /* puts("[Msg Sent to Client, waiting for reply now]"); */
     }
 
 }
-
-

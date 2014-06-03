@@ -53,11 +53,14 @@ int main(int argc, char *argv[])
   } 
 
 
+  printf("\nWhat you want to say to server?...\n"); 
+
   /* Communicate */
   for(;;) {
 
     /* Get Msg From User */
-    printf("\nWhat you want to say to server?...\n<< ");
+    
+    printf("\n<< "); 
     scanf("%[^\n]",sendBuff);
     /* scanf("%s", sendBuff); */
     /* Send msg to the server, using the client_sock */
@@ -65,7 +68,7 @@ int main(int argc, char *argv[])
       puts("send() failed\n");
       return 1;
     }
-    printf("%s is sent\n", sendBuff);
+    /* printf("%s is sent\n", sendBuff); */
     if (strcmp(sendBuff, "bye") == 0) {
       /* Let's say goodbye to server */
       /* Close the connection here */
@@ -73,7 +76,7 @@ int main(int argc, char *argv[])
       close(client_sock);
       return 0;
     }
-    puts("[Msg Sent To Server, Waiting For Reply Now...]");
+    /* puts("[Msg Sent To Server, Waiting For Reply Now...]"); */
 
     /* Receive message from client */
     if ((recv_size = recv(client_sock, recvBuff, sizeof(recvBuff), 0)) < 0) {
@@ -81,8 +84,8 @@ int main(int argc, char *argv[])
       return 1;
     }
 
-    printf("[Got Msg From Client...]\n>> %s", recvBuff);
-  
+    /* printf("[Got Msg From Client...]\n>> %s", recvBuff); */
+    printf(">> %s", recvBuff);
   } // end of for loop
 
 

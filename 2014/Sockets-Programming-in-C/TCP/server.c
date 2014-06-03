@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
       
       puts("[] What You want to say to client?..."); 
       printf("<< ");
-      scanf("%s", sendBuff);
+      scanf("%[^\n]",sendBuff);
 
       /* Send the string to the client */
       if (send(client_sock, sendBuff, strlen(sendBuff), 0) != strlen(sendBuff)) {

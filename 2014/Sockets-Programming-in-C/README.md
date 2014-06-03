@@ -3,15 +3,15 @@ Sockets Programming in C Using TCP/IP
 随手解救艾尼瓦，网络编程好蛋疼。。。
 
 * Refs
-    * [INTRODUCTION-TO-SOCKETS-PROGRAMMING-IN-C-USING-TCP-IP][sockets-programming-in-c-pdf]
+    * [INTRODUCTION-TO-SOCKETS-PROGRAMMING-IN-C-USING-TCP-IP (PDF)][sockets-programming-in-c-pdf]
 
 * Compile
-    * `gcc client.c -o client.bin`
-    * `gcc server.c -o server.bin`
+    * `gcc client.c -o client`
+    * `gcc server.c -o server`
 
 * Run
-    * `./server.bin`
-    * `./client.bin`
+    * `./server`
+    * `./client`
 
 
 
